@@ -3,4 +3,4 @@ project(Hadik_semestralna_praca C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(Hadik_semestralna_praca main.c)
+add_executable(Hadik_semestralna_praca main.c k_s_client.h k_s_server.h)
