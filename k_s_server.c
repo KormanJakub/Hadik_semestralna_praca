@@ -4,12 +4,95 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <pthread.h>
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 
 #include "k_s_server.h"
+
+#define UP_KEY 'W'
+#define DOWN_KEY 'S'
+#define RIGHT_KEY 'A'
+#define LEFT_KEY 'D'
+#define GAME_WIDTH 100
+#define GAME_HEIGHT 100
+
+int game_on = 0;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+//Smer, ktorým je hlava otočena
+typedef enum head_way {
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT
+} HEAD_WAY;
+
+typedef enum fruit_type {
+    APPLE,
+    CHERRY
+} FRUIT_TYPE;
+
+//Ci hrac je zivy alebo zomrel
+typedef enum player_state {
+    LIVE,
+    GAME_OVER,
+} PLAYER_STATE;
+
+typedef struct parameters {
+    int x;
+    int y;
+    int width;
+    int height;
+} PARAMETERS;
+
+//Struktura jedla
+typedef struct fruit {
+    FRUIT_TYPE fruit_type;
+    PARAMETERS parameters;
+} FRUIT;
+
+//Pozicia hlavy + smer hlavy
+typedef struct snake_head {
+    HEAD_WAY head_way;
+    PARAMETERS parameters;
+} SNAKE_HEAD;
+
+//Pozicia jednej casti tela + smer (kvoli smeru pohybu)
+typedef struct snake_body {
+    HEAD_WAY head_way;
+    PARAMETERS parameters;
+} SNAKE_BODY;
+
+//Had jednotlivy hraci
+typedef struct snake {
+    int id;
+    int lenght;
+    SNAKE_BODY snake_head;
+    SNAKE_BODY snake_body;
+} SNAKE;
+
+//Vytvaranie x a y pre fruit a typ fruitu
+void create_fruit() {
+    FRUIT *fruit;
+    int x,y;
+
+    x = rand() % GAME_WIDTH + 1;
+    y = rand() % GAME_HEIGHT + 1;
+
+    pthread_mutex_lock(&mutex);
+    if (rand() % 2 + 1 == 1) {
+        fruit->fruit_type = APPLE;
+    } else {
+        fruit->fruit_type = CHERRY;
+    }
+
+    fruit->parameters.x = x;
+    fruit->parameters.y = y;
+    pthread_mutex_unlock(&mutex);
+}
 
 char* spracujData(char *data) {
     char *akt = data;
