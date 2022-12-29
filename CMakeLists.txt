@@ -3,4 +3,7 @@ project(Hadik_semestralna_praca C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(Hadik_semestralna_praca main.c k_s_client.h k_s_server.h)
+add_executable(Server k_a_t_server.c)
+add_executable(Client k_a_t_client.c)
+add_executable(Main main.c)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
