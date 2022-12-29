@@ -8,6 +8,31 @@
 #include <unistd.h>
 #include <pthread.h>
 
+void createPlayground(){
+    int i, j, height = 20;
+    int width = 100;
+    int xOvocie = rand() % width + 1;
+    int yOvocie = rand() % height + 1;
+
+    for ( i = 0; i < height; ++i) {
+        for ( j = 0; j < width; ++j) {
+
+            if (i == 0 || i == height -1){
+                printf("-");
+            } else if( j == 0 || j == width - 1){
+                printf("|");
+            } else if( xOvocie == j && yOvocie == i){
+                printf("*");
+            }
+            else{
+                printf(" ");
+            }
+
+        }
+        printf("\n");
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 3) {
         printError("Sever je nutne spustit s nasledujucimi argumentmi: port pouzivatel.");
@@ -42,6 +67,8 @@ int main(int argc, char* argv[]) {
     struct sockaddr_in clientAddress;
     socklen_t clientAddressLength = sizeof(clientAddress);
     int clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientAddressLength);
+
+    //TODO: tu bude asi logika
 
     //uzavretie pasivneho socketu <unistd.h>
     close(serverSocket);
