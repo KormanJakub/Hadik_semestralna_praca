@@ -68,7 +68,6 @@ int main(int argc, char* argv[]) {
     socklen_t clientAddressLength = sizeof(clientAddress);
     int clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientAddressLength);
 
-    //TODO: tu bude asi logika
 
     //uzavretie pasivneho socketu <unistd.h>
     close(serverSocket);
