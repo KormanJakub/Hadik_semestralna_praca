@@ -238,12 +238,19 @@ int main(void)
 {
     srand(time(NULL));
 
+    //prerabka na smernik pokus zbavit sa segmentation fault --smernik nebol spravne riesenie
     SNAKE snake;
     snake.length = 3;
     snake.score = 0;
     snake.direction = RIGHT;
     snake.position[0].x = WIDTH / 2;
     snake.position[0].y = HEIGHT / 2;
+
+    //prvotne nastavenie prvych pozicii tela - uz nevyhadzuje segmentation fault
+    for (int i = 1; i < snake.length; ++i) {
+        snake.position[i].x = snake.position[i-1].x - 1;
+        snake.position[i].y = snake.position[i-1].y;
+    }
 
     FOOD food;
     food.position.x = rand() % WIDTH;
