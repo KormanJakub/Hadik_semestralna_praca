@@ -1,229 +1,286 @@
+#include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
-#include <SDL2/SDL.h>
+#include <time.h>
 
-#define WIDTH 800
-#define HEIGHT 600
-#define CAST 20
+#define WIDTH 20
+#define HEIGHT 20
 
-typedef enum direction {
-    UP,
-    DOWN,
-    RIGHT,
-    LEFT
-} DIRECTION;
+#define SNAKE_HEAD_UP		'^'
+#define SNAKE_HEAD_DOWN		'V'
+#define SNAKE_HEAD_LEFT		'<'
+#define SNAKE_HEAD_RIGHT	'>'
+#define SNAKE_BODY			'O'
+#define FOOD_TY				'*'
+#define EMPTY				'.'
 
-typedef enum food_type {
-    APPLE,
-    BANANA,
-} FOOD_TYPE;
-
-typedef struct position {
+typedef struct position
+{
     int x;
     int y;
 } POSITION;
 
-typedef struct snake {
-    POSITION position;
+typedef enum direction
+{
+    UP, DOWN, RIGHT, LEFT
+} DIRECTION;
+
+typedef struct snake
+{
+    POSITION position[100];
     DIRECTION direction;
+    int length;
+    int score;
 } SNAKE;
 
-typedef struct food {
+typedef struct food
+{
     POSITION position;
-    //FOOD_TYPE foodType;
 } FOOD;
 
-typedef struct game {
-    SNAKE telo[100];
-    FOOD food;
-    int lenght;
-    int gameOver;
-} GAME;
+void InitMap(char map[WIDTH][HEIGHT], SNAKE snake, FOOD food, DIRECTION direction)
+{
+    //Vykreslenie mapy
+    for (int i = 0; i < WIDTH; i++)
+    {
+        for (int j = 0; j < HEIGHT; j++)
+        {
+            map[i][j] = EMPTY;
+        }
+    }
 
-//TODO: Nemoze sa otacat o 180 stupnov
-void updateHead(SNAKE* head) {
-    switch (head->direction) {
+    //Vykreslenie hlavy
+    switch (direction)
+    {
         case UP:
-            head->position.y--;
+            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_UP;
             break;
         case DOWN:
-            head->position.y++;
+            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_DOWN;
             break;
         case RIGHT:
-            head->position.x++;
+            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_RIGHT;
             break;
         case LEFT:
-            head->position.x--;
+            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_LEFT;
             break;
     }
-}
 
-void addFruit(GAME* snake) {
-    snake->food = (FOOD) {
-        .position = (POSITION) {
-            .x = rand() % (WIDTH / CAST),
-            .y = rand() % (WIDTH / CAST)
-        }
-    };
-}
-
-void checkHeadCollision(SNAKE* head, GAME* snake) {
-    //Kontrola kolizie so stenou
-    if (head->position.x < 0 || head->position.x >= WIDTH / CAST ||
-        head->position.y < 0 || head->position.y >= HEIGHT / CAST) {
-        snake->gameOver = 1;
-        return;
+    //Vykreslenie tela
+    //pravdepodobne treba nastavit pociatocnu hodnotu x a y lebo na pozicii 1 je x -136349896 a y 32767
+    for (int i = 1; i < snake.length; i++) {
+        map[snake.position[i].y][snake.position[i].x] = SNAKE_BODY;
     }
 
-    //Kontrola kolizie s telom
-    for (int i = 1; i < snake->lenght; i++) {
-        if (head->position.x == snake->telo[i].position.x && head->position.y == snake->telo[i].position.y) {
-            snake->gameOver = 1;
-            return;
-        }
+
+    //Vykreslenie jedla
+    map[food.position.y][food.position.x] = FOOD_TY;
+}
+
+void Movement(SNAKE snake)
+{
+    for (int i = snake.length - 1; i > 0; i--) {
+        snake.position[i] = snake.position[i - 1];
     }
 
-    //Kontrola kolizie s jedlom
-    if (head->position.x == snake->food.position.x && head->position.y == snake->food.position.y) {
-        snake->telo[snake->lenght] = (SNAKE) {
-            .position = snake->telo[snake->lenght - 1].position,
-            .direction = snake->telo[snake->lenght - 1].direction
-        };
-
-        snake->lenght++;
-        addFruit(snake);
+    if (snake.direction == UP)
+    {
+        snake.position[0].y--;
+    }
+    else if (snake.direction == DOWN)
+    {
+        snake.position[0].y++;
+    }
+    else if (snake.direction == LEFT)
+    {
+        snake.position[0].x--;
+    }
+    else if (snake.direction == RIGHT)
+    {
+        snake.position[0].x++;
     }
 }
 
-void updateSnake(GAME* snake) {
-    for (int i = snake->lenght - 1; i > 0; i--) {
-        snake->telo[i] = snake->telo[i - 1];
-    }
-
-    SNAKE* head = &snake->telo[0];
-    updateHead(head);
-    checkHeadCollision(head, snake);
-}
-
-void drawGame(GAME* snake, SDL_Renderer* renderer) {
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-
-    for (int i = 0; i < snake->lenght; i++) {
-        SNAKE telo = snake->telo[i];
-
-        SDL_Rect rect = {
-                .x = telo.position.x * CAST,
-                .y = telo.position.y * CAST,
-                .w = CAST,
-                .h = CAST
-        };
-
-        SDL_RenderFillRect(renderer, &rect);
-    }
-
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-    SDL_Rect rect = {
-            .x = snake->food.position.x * CAST,
-            .y = snake->food.position.y * CAST,
-            .w = CAST,
-            .h = CAST
-    };
-
-    SDL_RenderFillRect(renderer, &rect);
-}
-
-int main(int argc, char* argv[]) {
-    SDL_Window* window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, 0);
-    if (window == NULL) {
-        fprintf(stderr, "Failed to create window: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (renderer == NULL) {
-        fprintf(stderr, "Failed to create renderer: %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
-
-    GAME game = {
-            .gameOver = 0,
-            .lenght = 3,
-            .food = (FOOD) {
-                    .position = (POSITION) {
-                            .x = rand() % (WIDTH / CAST),
-                            .y = rand() % (WIDTH / CAST)
-                    }
+void InputKeyboard(SNAKE snake)
+{
+    //Vkladanie pohybu z klavesnice + kontrola
+    int c = getchar();
+    switch (c) {
+        case 'w':
+            if (snake.direction != DOWN)
+            {
+                snake.direction = UP;
             }
-    };
-
-    for (int i = 0; i < 3; i++) {
-        game.telo[i] = (SNAKE) {
-                .direction = UP,
-                .position = (POSITION) {
-                        .x = WIDTH / 2 / CAST - i,
-                        .y = HEIGHT / 2 / CAST
-                }
-        };
-    }
-
-    int gameon = 1;
-    Uint32 lastTick = SDL_GetTicks();
-    while (gameon == 1) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    gameon = 0;
-                    break;
-                case SDL_KEYDOWN:
-                    switch (event.key.keysym.sym) {
-                        case SDLK_UP:
-                            if (game.telo[0].direction != DOWN) {
-                                game.telo[0].direction = UP;
-                            }
-                            break;
-                        case SDLK_DOWN:
-                            if (game.telo[0].direction != UP) {
-                                game.telo[0].direction = DOWN;
-                            }
-                            break;
-
-                        case SDLK_LEFT:
-                            if (game.telo[0].direction != RIGHT) {
-                                game.telo[0].direction = LEFT;
-                            }
-                            break;
-
-                        case SDLK_RIGHT:
-                            if (game.telo[0].direction != LEFT) {
-                                game.telo[0].direction = RIGHT;
-                            }
-                            break;
-                    }
-                    break;
+            else
+            {
+                printf("Nie je mozne vykonat z pohladu DOLE na pohlad HORE\n");
             }
+            break;
+        case 'd':
+            if (snake.direction != LEFT)
+            {
+                snake.direction = RIGHT;
+            }
+            else
+            {
+                printf("Nie je mozne vykonat z pohladu ZLAVA na pohlad DOPRAVA\n");
+            }
+            break;
+        case 'a':
+            if (snake.direction != RIGHT)
+            {
+                snake.direction = LEFT;
+            }
+            else
+            {
+                printf("Nie je mozne vykonat z pohladu ZPRAVA na pohlad DOLAVA\n");
+            }
+            break;
+        case 's':
+            if (snake.direction != UP)
+            {
+                snake.direction = DOWN;
+            }
+            else
+            {
+                printf("Nie je mozne vykonat z pohladu ZHORA na pohlad DOLE\n");
+            }
+            break;
+        default:
+            printf("Zadana klavesa nie je spravna\n");
+            break;
+
+    }
+    /*if (c == 'w')
+    {
+        if (snake.direction != DOWN)
+        {
+            snake.direction = UP;
         }
-
-        Uint32 currentTick = SDL_GetTicks();
-        if (currentTick - lastTick >= 250) {
-            updateSnake(&game);
-            lastTick = currentTick;
+        else
+        {
+            printf("Nie je mozne vykonat z pohladu DOLE na pohlad HORE\n");
         }
+    }
+    else if (c == 'd')
+    {
+        if (snake.direction != LEFT)
+        {
+            snake.direction = RIGHT;
+        }
+        else
+        {
+            printf("Nie je mozne vykonat z pohladu ZLAVA na pohlad DOPRAVA\n");
+        }
+    }
+    else if (c == 'a')
+    {
+        if (snake.direction != RIGHT)
+        {
+            snake.direction = LEFT;
+        }
+        else
+        {
+            printf("Nie je mozne vykonat z pohladu ZPRAVA na pohlad DOLAVA\n");
+        }
+    }
+    else if (c == 's')
+    {
+        if (snake.direction != UP)
+        {
+            snake.direction = DOWN;
+        }
+        else
+        {
+            printf("Nie je mozne vykonat z pohladu ZHORA na pohlad DOLE\n");
+        }
+    }
+    else
+    {
+        printf("Zadana klavesa nie je spravna\n");
+    }*/
+}
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-        drawGame(&game, renderer);
-        SDL_RenderPresent(renderer);
+bool CheckCollision(SNAKE snake)
+{
+    //Kontrola narazu s hranicami
+    if (snake.position[0].x < 0 || snake.position[0].y < 0 || snake.position[0].x >= WIDTH || snake.position[0].y >= HEIGHT)
+    {
+        return true;
+    }
 
-        if (game.gameOver == 1 || event.key.keysym.sym == SDLK_LCTRL) {
-            gameon = 0;
+    //Kontrola narazu s telom
+    for (int i = 1; i < snake.length; i++)
+    {
+        if (snake.position[0].x == snake.position[i].x && snake.position[0].y == snake.position[i].y)
+        {
+            printf("Hadik narazil do svojho tela\n");
+            return true;
         }
     }
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    return false;
+}
+
+bool CheckCollisionWithFood(SNAKE snake, FOOD food)
+{
+    //Kontrola narazu s jedlom
+    if (snake.position[0].x == food.position.x && snake.position[0].y == food.position.y)
+    {
+        printf("Hadik zjedol jedlo\n");
+        return true;
+    }
+    return false;
+}
+
+
+int main(void)
+{
+    srand(time(NULL));
+
+    SNAKE snake;
+    snake.length = 3;
+    snake.score = 0;
+    snake.direction = RIGHT;
+    snake.position[0].x = WIDTH / 2;
+    snake.position[0].y = HEIGHT / 2;
+
+    FOOD food;
+    food.position.x = rand() % WIDTH;
+    food.position.y = rand() % HEIGHT;
+
+    DIRECTION direction = UP;
+
+    char map[HEIGHT][WIDTH];
+
+    while (true)
+    {
+        InitMap(map, snake, food, direction);
+
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                printf("%c", map[i][j]);
+            }
+            printf("\n");
+        }
+
+        InputKeyboard(snake);
+        Movement(snake);
+
+        if (CheckCollision(snake))
+        {
+            break;
+        }
+
+        if (CheckCollisionWithFood(snake, food))
+        {
+            food.position.x = rand() % WIDTH;
+            food.position.y = rand() % HEIGHT;
+
+            snake.length++;
+            snake.score++;
+        }
+    }
+
+    return 0;
 }
