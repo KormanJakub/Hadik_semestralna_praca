@@ -39,7 +39,7 @@ typedef struct food
     POSITION position;
 } FOOD;
 
-void InitMap(char map[WIDTH][HEIGHT], SNAKE snake, FOOD food, DIRECTION direction)
+void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake, FOOD food, DIRECTION * direction)
 {
     //Vykreslenie mapy
     for (int i = 0; i < WIDTH; i++)
@@ -51,29 +51,28 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE snake, FOOD food, DIRECTION directio
     }
 
     //Vykreslenie hlavy
-    switch (direction)
+    switch (*direction)
     {
         case UP:
-            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_UP;
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
             break;
         case DOWN:
-            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_DOWN;
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
             break;
         case RIGHT:
-            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_RIGHT;
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
             break;
         case LEFT:
-            map[snake.position[0].y][snake.position[0].x] = SNAKE_HEAD_LEFT;
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
             break;
         default:
-            printf("Ha ha ani sa nedostal k spravnemu enumu");
             break;
     }
 
     //Vykreslenie tela
     //pravdepodobne treba nastavit pociatocnu hodnotu x a y lebo na pozicii 1 je x -136349896 a y 32767
-    for (int i = 1; i < snake.length; i++) {
-        map[snake.position[i].y][snake.position[i].x] = SNAKE_BODY;
+    for (int i = 1; i < snake->length; i++) {
+        map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY;
 
     }
 
@@ -119,52 +118,6 @@ void InputKeyboard(SNAKE * snake)
     getchar();
     //co ak nezadal nic? - myslim si ze preto to pokracuje s vypisom nespravna klavesa
 
-  /*  switch (c) {
-        case 'w':
-            if (snake.direction != DOWN)
-            {
-                snake.direction = UP;
-            }
-            else
-            {
-                printf("Nie je mozne vykonat z pohladu DOLE na pohlad HORE\n");
-            }
-            break;
-        case 'd':
-            if (snake.direction != LEFT)
-            {
-                snake.direction = RIGHT;
-            }
-            else
-            {
-                printf("Nie je mozne vykonat z pohladu ZLAVA na pohlad DOPRAVA\n");
-            }
-            break;
-        case 'a':
-            if (snake.direction != RIGHT)
-            {
-                snake.direction = LEFT;
-            }
-            else
-            {
-                printf("Nie je mozne vykonat z pohladu ZPRAVA na pohlad DOLAVA\n");
-            }
-            break;
-        case 's':
-            if (snake.direction != UP)
-            {
-                snake.direction = DOWN;
-            }
-            else
-            {
-                printf("Nie je mozne vykonat z pohladu ZHORA na pohlad DOLE\n");
-            }
-            break;
-        default:
-            printf("Zadana klavesa nie je spravna\n");
-            break;
-
-    }*/
     if (c == 'w')
     {
         if (snake->direction != DOWN)
@@ -273,7 +226,7 @@ int main(void)
     DIRECTION direction = UP;
 
     char map[HEIGHT][WIDTH];
-    InitMap(map, snake, food, direction);
+    InitMap(map, &snake, food, &snake.direction);
     while (true)
     {
 
@@ -301,7 +254,7 @@ int main(void)
             snake.length++;
             snake.score++;
         }
-        InitMap(map, snake, food, direction);
+        InitMap(map, &snake, food, &snake.direction);
     }
 
     return 0;
