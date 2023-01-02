@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <curses.h>
 
 #define WIDTH 20
 #define HEIGHT 20
@@ -79,9 +80,6 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE snake, FOOD food, DIRECTION directio
 
 void Movement(SNAKE snake)
 {
-    for (int i = snake.length - 1; i > 0; i--) {
-        snake.position[i] = snake.position[i - 1];
-    }
 
     if (snake.direction == UP)
     {
@@ -99,14 +97,18 @@ void Movement(SNAKE snake)
     {
         snake.position[0].x++;
     }
+
+    for (int i = snake.length - 1; i > 0; i--) {
+        snake.position[i] = snake.position[i - 1];
+    }
+
 }
 
 void InputKeyboard(SNAKE snake)
 {
     //Vkladanie pohybu z klavesnice + kontrola
     int c = getchar();
-    printf("Zadana klavesa bola: ");
-    putchar(c);
+    getchar();
     //co ak nezadal nic? - myslim si ze preto to pokracuje s vypisom nespravna klavesa
 
     switch (c) {
