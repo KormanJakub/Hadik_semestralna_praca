@@ -11,6 +11,7 @@ extern "C" {
 #define BUFFER_LENGTH 300
 extern char *endMsg;
 
+    //tu bude pravdepodone had
 typedef struct data {
     char userName[USER_LENGTH + 1];
     pthread_mutex_t mutex;
