@@ -105,6 +105,10 @@ void InputKeyboard(SNAKE snake)
 {
     //Vkladanie pohybu z klavesnice + kontrola
     int c = getchar();
+    printf("Zadana klavesa bola: ");
+    putchar(c);
+    //co ak nezadal nic? - myslim si ze preto to pokracuje s vypisom nespravna klavesa
+
     switch (c) {
         case 'w':
             if (snake.direction != DOWN)
@@ -151,54 +155,54 @@ void InputKeyboard(SNAKE snake)
             break;
 
     }
-    /*if (c == 'w')
-    {
-        if (snake.direction != DOWN)
-        {
-            snake.direction = UP;
-        }
-        else
-        {
-            printf("Nie je mozne vykonat z pohladu DOLE na pohlad HORE\n");
-        }
-    }
-    else if (c == 'd')
-    {
-        if (snake.direction != LEFT)
-        {
-            snake.direction = RIGHT;
-        }
-        else
-        {
-            printf("Nie je mozne vykonat z pohladu ZLAVA na pohlad DOPRAVA\n");
-        }
-    }
-    else if (c == 'a')
-    {
-        if (snake.direction != RIGHT)
-        {
-            snake.direction = LEFT;
-        }
-        else
-        {
-            printf("Nie je mozne vykonat z pohladu ZPRAVA na pohlad DOLAVA\n");
-        }
-    }
-    else if (c == 's')
-    {
-        if (snake.direction != UP)
-        {
-            snake.direction = DOWN;
-        }
-        else
-        {
-            printf("Nie je mozne vykonat z pohladu ZHORA na pohlad DOLE\n");
-        }
-    }
-    else
-    {
-        printf("Zadana klavesa nie je spravna\n");
-    }*/
+//    if (c == 'w')
+//    {
+//        if (snake.direction != DOWN)
+//        {
+//            snake.direction = UP;
+//        }
+//        else
+//        {
+//            printf("Nie je mozne vykonat z pohladu DOLE na pohlad HORE\n");
+//        }
+//    }
+//    else if (c == 'd')
+//    {
+//        if (snake.direction != LEFT)
+//        {
+//            snake.direction = RIGHT;
+//        }
+//        else
+//        {
+//            printf("Nie je mozne vykonat z pohladu ZLAVA na pohlad DOPRAVA\n");
+//        }
+//    }
+//    else if (c == 'a')
+//    {
+//        if (snake.direction != RIGHT)
+//        {
+//            snake.direction = LEFT;
+//        }
+//        else
+//        {
+//            printf("Nie je mozne vykonat z pohladu ZPRAVA na pohlad DOLAVA\n");
+//        }
+//    }
+//    else if (c == 's')
+//    {
+//        if (snake.direction != UP)
+//        {
+//            snake.direction = DOWN;
+//        }
+//        else
+//        {
+//            printf("Nie je mozne vykonat z pohladu ZHORA na pohlad DOLE\n");
+//        }
+//    }
+//    else
+//    {
+//        printf("Zadana klavesa nie je spravna\n");
+//    }
 }
 
 bool CheckCollision(SNAKE snake)
