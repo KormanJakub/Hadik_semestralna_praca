@@ -9,6 +9,8 @@
 #include <unistd.h>
 #include <pthread.h>
 
+//TODO: bude treba snake
+
 int main(int argc, char *argv[]) {
     if (argc < 4) {
         printError("Klienta je nutne spustit s nasledujucimi argumentmi: adresa port pouzivatel.");
