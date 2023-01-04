@@ -15,7 +15,7 @@
 #define FOOD_TY				'*'
 #define EMPTY				'.'
 
-#define SNAKE_BODY_2 '§'
+#define SNAKE_BODY_2        '8'
 
 typedef struct position
 {
@@ -28,10 +28,16 @@ typedef enum direction
     UP, DOWN, RIGHT, LEFT
 } DIRECTION;
 
+typedef enum snake_type{
+    SERVER, KLIENT
+}SNAKE_TYPE;
+
 typedef struct snake
 {
     POSITION position[100];
     DIRECTION direction;
+    //na kontrolu ktory had sa ma vykreslit
+    SNAKE_TYPE type;
     int length;
     int score;
 } SNAKE;
@@ -41,7 +47,8 @@ typedef struct food
     POSITION position;
 } FOOD;
 
-void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake, FOOD food, DIRECTION * direction)
+//player pridany aby sa vedelo ktoreho hada otocit
+void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, DIRECTION * direction, int player)
 {
     //Vykreslenie mapy
     for (int i = 0; i < WIDTH; i++)
@@ -56,16 +63,48 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake, FOOD food, DIRECTION * dire
     switch (*direction)
     {
         case UP:
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
+            if (player == 1){
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;}
+            if (player == 2){
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_UP;
+            }
+            if (player == 100){
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_UP;
+            }
             break;
         case DOWN:
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
+            if (player == 1){
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;}
+            if (player == 2){
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_DOWN;
+            }
+            if (player == 100){
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_DOWN;
+            }
             break;
         case RIGHT:
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
+            if (player == 1){
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;}
+            if (player == 2){
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_RIGHT;
+            }
+            if (player == 100){
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_RIGHT;
+            }
             break;
         case LEFT:
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
+            if (player == 1){
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;}
+            if (player == 2){
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_LEFT;
+            }
+            if (player == 100){
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
+                map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_LEFT;
+            }
             break;
         default:
             break;
@@ -73,10 +112,19 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake, FOOD food, DIRECTION * dire
 
     //Vykreslenie tela
     //pravdepodobne treba nastavit pociatocnu hodnotu x a y lebo na pozicii 1 je x -136349896 a y 32767
-    for (int i = 1; i < snake->length; i++) {
-        map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY;
+    if (snake->type == SERVER){
+        for (int i = 1; i < snake->length; i++) {
+            map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY;
 
+        }
     }
+     if (snake2->type == KLIENT){
+        for (int i = 1; i < snake->length; i++) {
+            map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY_2;
+
+        }
+    }
+
 
 
     //Vykreslenie jedla
@@ -205,20 +253,33 @@ bool CheckCollisionWithFood(SNAKE snake, FOOD food)
 
 int main(void)
 {
+    int snake1crash = 0;
+    int snake2crash = 0;
     srand(time(NULL));
 
     //prerabka na smernik pokus zbavit sa segmentation fault --smernik nebol spravne riesenie
     SNAKE snake;
+    SNAKE snake2;
     snake.length = 3;
     snake.score = 0;
+    snake2.length = 3;
+    snake2.score = 0;
     snake.direction = UP;
+    snake2.direction = UP;
     snake.position[0].x = WIDTH / 2;
     snake.position[0].y = HEIGHT / 2;
+
+    snake2.position[0].x = (WIDTH / 2) + 3;
+    snake2.position[0].y = HEIGHT / 2;
 
     //prvotne nastavenie prvych pozicii tela - uz nevyhadzuje segmentation fault
     for (int i = 1; i < snake.length; ++i) {
         snake.position[i].x = snake.position[i-1].x;
         snake.position[i].y = snake.position[i-1].y + 1;
+    }
+    for (int i = 1; i < snake2.length; ++i) {
+        snake2.position[i].x = snake2.position[i-1].x;
+        snake2.position[i].y = snake2.position[i-1].y + 1;
     }
 
     FOOD food;
@@ -228,7 +289,8 @@ int main(void)
     DIRECTION direction = UP;
 
     char map[HEIGHT][WIDTH];
-    InitMap(map, &snake, food, &snake.direction);
+    //prva inicializacia vykresli oboch rovnako
+    InitMap(map, &snake,&snake2, food, &snake.direction, 100);
     while (true)
     {
 
@@ -243,9 +305,12 @@ int main(void)
         InputKeyboard(&snake);
         Movement(&snake);
 
-        if (CheckCollision(snake))
+
+
+        //toto bude treba inak lebo druhy hrac bude este moct predsa hrat
+        if (CheckCollision(snake) && snake1crash == 0)
         {
-            break;
+            snake1crash = 1;
         }
 
         if (CheckCollisionWithFood(snake, food))
@@ -256,7 +321,32 @@ int main(void)
             snake.length++;
             snake.score++;
         }
-        InitMap(map, &snake, food, &snake.direction);
+
+        InitMap(map, &snake,&snake2, food, &snake.direction, 1);
+
+        //pohyb bude musiet byt oddelene si myslim
+        InputKeyboard(&snake2);
+        Movement(&snake2);
+
+        if (CheckCollision(snake2) && snake2crash == 0)
+        {
+            snake2crash = 1;
+        }
+
+        if (CheckCollisionWithFood(snake2, food))
+        {
+            food.position.x = rand() % WIDTH;
+            food.position.y = rand() % HEIGHT;
+
+            snake2.length++;
+            snake2.score++;
+        }
+
+        if (snake1crash == 1 && snake2crash == 1){
+            break;
+        }
+
+        InitMap(map, &snake,&snake2, food, &snake.direction, 2);
     }
 
     return 0;
