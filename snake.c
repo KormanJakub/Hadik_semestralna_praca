@@ -15,6 +15,8 @@
 #define FOOD_TY				'*'
 #define EMPTY				'.'
 
+#define SNAKE_BODY_2 '§'
+
 typedef struct position
 {
     int x;
