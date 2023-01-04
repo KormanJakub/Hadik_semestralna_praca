@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
-#include <curses.h>
 
 #define WIDTH 20
 #define HEIGHT 20
@@ -111,21 +110,16 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
     }
 
     //Vykreslenie tela
-    //pravdepodobne treba nastavit pociatocnu hodnotu x a y lebo na pozicii 1 je x -136349896 a y 32767
     if (snake->type == SERVER){
         for (int i = 1; i < snake->length; i++) {
             map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY;
-
         }
     }
-     if (snake2->type == KLIENT){
-        for (int i = 1; i < snake->length; i++) {
+     if (snake->type == KLIENT){
+        for (int i = 1; i < snake2->length; i++) {
             map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY_2;
-
         }
     }
-
-
 
     //Vykreslenie jedla
     map[food.position.y][food.position.x] = FOOD_TY;
@@ -156,9 +150,6 @@ void Movement(SNAKE * snake)
         printf("Vpravo\n");
         snake->position[0].x++;
     }
-
-
-
 }
 
 void InputKeyboard(SNAKE * snake)
@@ -258,21 +249,27 @@ int main(void)
     srand(time(NULL));
 
     //prerabka na smernik pokus zbavit sa segmentation fault --smernik nebol spravne riesenie
-    SNAKE snake;
-    SNAKE snake2;
+    SNAKE snake, snake2;
+
     snake.length = 3;
     snake.score = 0;
+
     snake2.length = 3;
     snake2.score = 0;
+
     snake.direction = UP;
     snake2.direction = UP;
+
+    snake.type = SERVER;
+    snake2.type = KLIENT;
+
     snake.position[0].x = WIDTH / 2;
     snake.position[0].y = HEIGHT / 2;
 
     snake2.position[0].x = (WIDTH / 2) + 3;
     snake2.position[0].y = HEIGHT / 2;
 
-    //prvotne nastavenie prvych pozicii tela - uz nevyhadzuje segmentation fault
+    //prvotne nastavenie prvych pozicii tela
     for (int i = 1; i < snake.length; ++i) {
         snake.position[i].x = snake.position[i-1].x;
         snake.position[i].y = snake.position[i-1].y + 1;
@@ -286,15 +283,11 @@ int main(void)
     food.position.x = rand() % WIDTH;
     food.position.y = rand() % HEIGHT;
 
-    DIRECTION direction = UP;
-
     char map[HEIGHT][WIDTH];
     //prva inicializacia vykresli oboch rovnako
     InitMap(map, &snake,&snake2, food, &snake.direction, 100);
     while (true)
     {
-
-
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 printf("%c", map[i][j]);
@@ -302,10 +295,9 @@ int main(void)
             printf("\n");
         }
 
+        printf("Narade je prvy hrac\n");
         InputKeyboard(&snake);
         Movement(&snake);
-
-
 
         //toto bude treba inak lebo druhy hrac bude este moct predsa hrat
         if (CheckCollision(snake) && snake1crash == 0)
@@ -322,9 +314,17 @@ int main(void)
             snake.score++;
         }
 
-        InitMap(map, &snake,&snake2, food, &snake.direction, 1);
+        InitMap(map, &snake,&snake2, food, &snake.direction, 100);
+
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                printf("%c", map[i][j]);
+            }
+            printf("\n");
+        }
 
         //pohyb bude musiet byt oddelene si myslim
+        printf("Narade je druhy hrac\n");
         InputKeyboard(&snake2);
         Movement(&snake2);
 
@@ -343,10 +343,11 @@ int main(void)
         }
 
         if (snake1crash == 1 && snake2crash == 1){
+            printf("Oba hadiky zomreli\nGAME OVER!!!");
             break;
         }
 
-        InitMap(map, &snake,&snake2, food, &snake.direction, 2);
+        InitMap(map, &snake,&snake2, food, &snake.direction, 100);
     }
 
     return 0;
