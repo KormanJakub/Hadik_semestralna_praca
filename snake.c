@@ -47,6 +47,7 @@ typedef struct food
 } FOOD;
 
 //player pridany aby sa vedelo ktoreho hada otocit
+//TODO: Pripomenu, že existuje aj druhy hadik + vyriešiť dokreslenie druheho hadika
 void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, DIRECTION * direction, int player)
 {
     //Vykreslenie mapy
@@ -314,7 +315,7 @@ int main(void)
             snake.score++;
         }
 
-        InitMap(map, &snake,&snake2, food, &snake.direction, 100);
+        InitMap(map, &snake,&snake2, food, &snake.direction, 1);
 
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
@@ -342,12 +343,12 @@ int main(void)
             snake2.score++;
         }
 
-        if (snake1crash == 1 && snake2crash == 1){
+        if (snake1crash == 1 && snake2crash == 1) {
             printf("Oba hadiky zomreli\nGAME OVER!!!");
             break;
         }
 
-        InitMap(map, &snake,&snake2, food, &snake.direction, 100);
+        InitMap(map, &snake,&snake2, food, &snake.direction, 2);
     }
 
     return 0;
