@@ -37,9 +37,15 @@ typedef struct snake
     DIRECTION direction;
     //na kontrolu ktory had sa ma vykreslit
     SNAKE_TYPE type;
-    int length;
     int score;
+    int snakeLength;
 } SNAKE;
+
+typedef struct snakeP
+{
+    int score;
+    int snakeLength;
+} SNAKEP;
 
 typedef struct food
 {
@@ -47,7 +53,7 @@ typedef struct food
 } FOOD;
 
 void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
-
+    printf("?????????? INSIDE DRAW OTHER 56 ????????????????????\n");
     switch (snake->direction) {
         case UP:
             map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
@@ -63,18 +69,24 @@ void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
             break;
 
     }
+    printf("?????????? AFTER DRAW OTHER 56 ????????????????????\n");
+
 }
 
 //player pridany aby sa vedelo ktoreho hada otocit
 //TODO: Pripomenu, že existuje aj druhy hadik + vyriešiť dokreslenie druheho hadika
 void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, DIRECTION * direction, int player)
 {
+
     //Vykreslenie mapy
     for (int i = 0; i < WIDTH; i++)
     {
+        printf("??????????actual I:%d ????????????????????\n",i);
         for (int j = 0; j < HEIGHT; j++)
         {
+            printf("??????????actual J:%d ????????????????????\n",i);
             map[i][j] = EMPTY;
+            printf("??????????actual J:%d ????????????????????\n",j);
         }
     }
 
@@ -151,23 +163,38 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
 
     //Vykreslenie tela
     //if (snake->type == SERVER){
-        for (int i = 1; i < snake->length; i++) {
-            map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY;
-        }
+    printf("?????????? PAINT MY BODY ????????????????????\n");
+    for (int i = 1; i < snake->snakeLength; i++) {
+        printf("?????????? PAINT MY BODY SNAKE 1 BEGIN : %d ????????????????????\n", i);
+
+            int posY = snake->position[i].y;
+        int posX = snake->position[i].x;
+        printf("?????????? PAINT MY BODY SNAKE 1 posY : %d ????????????????????\n", posY);
+        printf("?????????? PAINT MY BODY SNAKE 1 posX : %d ????????????????????\n", posX);
+            map[posY][posX] = SNAKE_BODY;
+        printf("?????????? PAINT MY BODY SNAKE 1 END : %d ????????????????????\n", i);
+
+    }
     //}
      //if (snake->type == KLIENT){
-        for (int i = 1; i < snake2->length; i++) {
+    //printf("?????????? PAINT MY BODY SNAKE 2 BEGIN  ????????????????????\n");
+
+    for (int i = 1; i < snake2->snakeLength; i++) {
+            printf("?????????? PAINT MY BODY BODY SNAKE 2 : %d ????????????????????\n", i);
             map[snake2->position[i].y][snake2->position[i].x] = SNAKE_BODY_2;
         }
     //}
+    printf("?????????? FULL PAINT FOOD BEGIN ????????????????????\n");
 
     //Vykreslenie jedla
     map[food.position.y][food.position.x] = FOOD_TY;
+    printf("?????????? FULL PAINT FOOD END ????????????????????\n");
+
 }
 
 void Movement(SNAKE * snake)
 {
-    for (int i = snake->length - 1; i > 0; i--) {
+    for (int i = snake->snakeLength - 1; i > 0; i--) {
         snake->position[i] = snake->position[i - 1];
     }
     if (snake->direction == UP)
@@ -258,7 +285,7 @@ bool CheckCollision(SNAKE snake, SNAKE snake2)
     }
 
     //Kontrola narazu s telom
-    for (int i = 1; i < snake.length; i++)
+    for (int i = 1; i < snake.snakeLength; i++)
     {
         if (snake.position[0].x == snake.position[i].x && snake.position[0].y == snake.position[i].y)
         {
@@ -267,7 +294,7 @@ bool CheckCollision(SNAKE snake, SNAKE snake2)
         }
     }
 //TODO: skontrollovat ci umru pri narazoch hlavy
-    for (int i = 0; i < snake2.length; i++)
+    for (int i = 0; i < snake2.snakeLength; i++)
     {
         if (snake.position[0].x == snake2.position[i].x && snake.position[0].y == snake2.position[i].y)
         {
@@ -281,6 +308,7 @@ bool CheckCollision(SNAKE snake, SNAKE snake2)
 
 bool CheckCollisionWithFood(SNAKE snake, FOOD food)
 {
+    printf("Had %u sa snazi zjest jedlo\n", snake.type);
     //Kontrola narazu s jedlom
     if (snake.position[0].x == food.position.x && snake.position[0].y == food.position.y)
     {
@@ -299,11 +327,22 @@ int main(void)
 
     //prerabka na smernik pokus zbavit sa segmentation fault --smernik nebol spravne riesenie
     SNAKE snake, snake2;
+    SNAKEP snakep;
 
-    snake.length = 3;
+    snakep.snakeLength = 2;
+    snakep.score = 0;
+
+    snake.snakeLength = 3;
+//    ++snake.snakeLength;
+//    ++snake.snakeLength;
+//    ++snake.snakeLength;
+//    ++snake.snakeLength;
+//    ++snake.snakeLength;
+//    ++snake.snakeLength;
     snake.score = 0;
 
-    snake2.length = 3;
+    snake2.snakeLength = 3;
+//    snake2.snakeLength++;
     snake2.score = 0;
 
     snake.direction = UP;
@@ -319,11 +358,11 @@ int main(void)
     snake2.position[0].y = HEIGHT / 2;
 
     //prvotne nastavenie prvych pozicii tela
-    for (int i = 1; i < snake.length; ++i) {
+    for (int i = 1; i < snake.snakeLength; ++i) {
         snake.position[i].x = snake.position[i-1].x;
         snake.position[i].y = snake.position[i-1].y + 1;
     }
-    for (int i = 1; i < snake2.length; ++i) {
+    for (int i = 1; i < snake2.snakeLength; ++i) {
         snake2.position[i].x = snake2.position[i-1].x;
         snake2.position[i].y = snake2.position[i-1].y + 1;
     }
@@ -335,6 +374,19 @@ int main(void)
     char map[HEIGHT][WIDTH];
     //prva inicializacia vykresli oboch rovnako
     InitMap(map, &snake,&snake2, food, &snake.direction, 100);
+//    snake.snakeLength++;
+
+    printf("CHCEM INFO AKY JE HAD\n");
+    for (int i = 0; i < snake.snakeLength; ++i) {
+        printf("HAD 1 poradove cislo: %d posX: %d\n", i, snake.position[i].x);
+        printf("HAD 1 poradove cislo: %d posY: %d\n", i, snake.position[i].y);
+    }
+    for (int i = 0; i < snake2.snakeLength; ++i) {
+        printf("HAD 2 poradove cislo: %d posX: %d\n", i, snake2.position[i].x);
+        printf("HAD 2 poradove cislo: %d posY: %d\n", i, snake2.position[i].y);
+    }
+
+
     while (true)
     {
         for (int i = 0; i < WIDTH; i++) {
@@ -344,6 +396,8 @@ int main(void)
             printf("\n");
         }
 
+//        snake.snakeLength = snake.snakeLength + 1;
+
       if(snake1crash == 0)
       {
             printf("Narade je prvy hrac\n");
@@ -351,49 +405,73 @@ int main(void)
             Movement(&snake);
 
             //toto bude treba inak lebo druhy hrac bude este moct predsa hrat
-            if (CheckCollision(snake, snake2) && snake1crash == 0)
+            if (CheckCollision(snake, snake2))
             {
                 snake1crash = 1;
             }
 
-            if (CheckCollisionWithFood(snake, food))
+//            if (CheckCollisionWithFood(snake, food))
+            if (true)
             {
+//                snake.snakeLength++;
+
                 printf("HAD1: dostal som sa do jedenia");
                 food.position.x = rand() % WIDTH;
                 food.position.y = rand() % HEIGHT;
 
-                snake.length++;
-                snake.score++;
+               printf("\n%d\n", snake.snakeLength);
+                int snk = snake.snakeLength;
+                snk = snk + 1;
+                snake.snakeLength = snk;
+                printf("??????????%d????????????????????\n",snake.snakeLength );
+//TODO:TU TO TREBA TAKTO NAINICIALIZOVAŤ!!!! takto všetko
+                snake.position[snake.snakeLength-1].x = snake.position[snake.snakeLength-2].x; //zlozitejsia logika treba vyriesit ak je na krajoch hracieho pola
+                snake.position[snake.snakeLength-1].y = snake.position[snake.snakeLength-2].y+1;//zlozitejsia logika treba vyriesit ak je na krajoch hracieho pola
+//                ++snake.snakeLength;
+            //    snake.score = snake.score + 1;
+            } else
+            {
+                printf("HAD1: nezjedol som nic");
             }
 
       }
 
+        printf("??????????INIT MAP????????????????????\n");
         InitMap(map, &snake,&snake2, food, &snake.direction, 1);
-
+        //TODO: tento for by sa dal dat do funkcie
+        printf("??????????AFTER INIT MAP????????????????????\n");
         for (int i = 0; i < WIDTH; i++) {
+            //printf("??????????FOR 1 %d????????????????????\n");
             for (int j = 0; j < HEIGHT; j++) {
                 printf("%c", map[i][j]);
             }
             printf("\n");
         }
-
+        printf("??????????FOR 414 ????????????????????\n");
         //pohyb bude musiet byt oddelene si myslim
         if(snake2crash == 0) {
+            printf("??????????FOR 417 %d????????????????????\n");
                 printf("Narade je druhy hrac\n");
                 InputKeyboard(&snake2);
+            printf("??????????FOR 420 ????????????????????\n");
                 Movement(&snake2);
-
-                if (CheckCollision(snake2, snake) && snake2crash == 0) {
+            printf("??????????FOR 422 %d????????????????????\n");
+                if (CheckCollision(snake2, snake)) {
                     snake2crash = 1;
+                    printf("??????????FOR 425 %d????????????????????\n");
                 }
 
                 if (CheckCollisionWithFood(snake2, food)) {
                     printf("HAD2: dostal som sa do jedenia");
                     food.position.x = rand() % WIDTH;
                     food.position.y = rand() % HEIGHT;
-
-                    snake2.length++;
+                    printf("??????????FOR 432 %d????????????????????\n");
+                    snake2.snakeLength++;
+                    printf("??????????FOR 434 %d????????????????????\n");
                     snake2.score++;
+                } else
+                {
+                    printf("HAD2: nezjedol som nic");
                 }
 
         }
@@ -403,6 +481,17 @@ int main(void)
             break;
         }
         InitMap(map, &snake,&snake2, food, &snake2.direction, 2);
+
+        printf("CHCEM INFO AKY JE HAD\n");
+
+        for (int i = 0; i < snake.snakeLength; ++i) {
+            printf("HAD 1 poradove cislo: %d posX: %d\n", i, snake.position[i].x);
+            printf("HAD 1 poradove cislo: %d posY: %d\n", i, snake.position[i].y);
+        }
+        for (int i = 0; i < snake2.snakeLength; ++i) {
+            printf("HAD 2 poradove cislo: %d posX: %d\n", i, snake2.position[i].x);
+            printf("HAD 2 poradove cislo: %d posY: %d\n", i, snake2.position[i].y);
+        }
     }
 
     return 0;
