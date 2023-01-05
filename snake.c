@@ -429,7 +429,30 @@ void placeNewBodyPart(SNAKE * snake){
             }
             //ak sa nerovnaju ani riadky ani stlpce
         } else {
-            printf("Dostal som sa k switchu!!!!!");
+            //ak su v rovnakom riadku
+            if ( snake->position[snake->snakeLength - 2].y == snake->position[snake->snakeLength - 3].y){
+                //ide had do prava
+                if(snake->position[snake->snakeLength - 2].x < snake->position[snake->snakeLength - 3].x){
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                } else{
+                    //had ide do lava
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x + 1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                }
+                //ak su v jednom stlpci
+            } else if (snake->position[snake->snakeLength - 2].x == snake->position[snake->snakeLength - 3].x){
+                if(snake->position[snake->snakeLength - 2].y < snake->position[snake->snakeLength - 3].y){
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y-1;
+                } else{
+                    //had ide do lava
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
+                }
+            }
+            printf("Dostal som suradnice!!!!");
+            /*printf("Dostal som sa k switchu!!!!!");
             switch (snake->direction) {
                 case UP:
                     snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
@@ -447,7 +470,7 @@ void placeNewBodyPart(SNAKE * snake){
                     snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x-1;
                     snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
                     break;
-            }
+            }*/
         }
     }
 }
