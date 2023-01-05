@@ -318,6 +318,139 @@ bool CheckCollisionWithFood(SNAKE snake, FOOD food)
     return false;
 }
 
+void placeNewBodyPart(SNAKE * snake){
+    //ak si na hranici x tak x bude rovnake ale y ine
+
+    if (snake->position[snake->snakeLength-2].x == WIDTH - 1){
+        //ak je v pravom hornom rohu
+        if  ( snake->position[snake->snakeLength-2].y == 0 ) {
+            //ak je aj zvysok tela v pravom stlpci
+            if (snake->position[snake->snakeLength - 3].x == WIDTH - 1) {
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+            } else {
+                //ak je zvysok v hornom riadku
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
+            }
+
+        } else if(snake->position[snake->snakeLength-2].y == HEIGHT - 1){
+            if (snake->position[snake->snakeLength - 3].x == WIDTH - 1) {
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+            } else {
+                //ak je zvysok v hornom riadku
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y-1;
+            }
+            //ak su v rovnako stlpci
+        } else if(snake->position[snake->snakeLength - 2].x  ==  snake->position[snake->snakeLength - 3].x ){
+            //ak je predposledna cast nizsie teda had smeruje dole
+            if (snake->position[snake->snakeLength - 2].y  >  snake->position[snake->snakeLength - 3].y){
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y-1;
+            }else {
+                //ak smeruje had hore
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
+            }
+        }
+        //ak je y ne dolnej hranici tak sa to musi vykreslit bokom
+    }else if(snake->position[snake->snakeLength-2].x == 0){
+        //ak je v lavom hornom rohu
+        if  ( snake->position[snake->snakeLength-2].y == 0 ) {
+            //ak je aj zvysok tela v pravom stlpci
+            if (snake->position[snake->snakeLength - 3].x == 0) {
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x + 1;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+            } else {
+                //ak je zvysok v hornom riadku
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
+            }
+            //ak je v lavom dolnom rohu
+        } else if(snake->position[snake->snakeLength-2].y == HEIGHT - 1){
+            if (snake->position[snake->snakeLength - 3].x == 0) {
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x + 1;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+            } else {
+                //ak je zvysok v dolnom riadku
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y-1;
+            }
+            //ak su v rovnako stlpci
+        } else if(snake->position[snake->snakeLength - 2].x  ==  snake->position[snake->snakeLength - 3].x ){
+            //ak je predposledna cast nizsie teda had smeruje dole
+            if (snake->position[snake->snakeLength - 2].y  >  snake->position[snake->snakeLength - 3].y){
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y-1;
+            }else {
+                //ak smeruje had hore
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
+            }
+        }else{
+            snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+            snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
+        }
+    } else{
+        if(snake->position[snake->snakeLength-2].y == 0){
+            //rohy su vyriesene vyssie
+            if (snake->position[snake->snakeLength-2].y == snake->position[snake->snakeLength-3].y){
+                //ak je
+                if (snake->position[snake->snakeLength-2].x > snake->position[snake->snakeLength-3].x){
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x + 1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                } else{
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                }
+
+            } else{
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+            }
+        }else if(snake->position[snake->snakeLength-2].y == HEIGHT - 1){
+            //rohy su vyriesene vyssie
+            if (snake->position[snake->snakeLength-2].y == snake->position[snake->snakeLength-3].y){
+                //ak je//TODO:skontrolovať
+                if (snake->position[snake->snakeLength-2].x > snake->position[snake->snakeLength-3].x){
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x + 1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                } else{
+                    //TODO:skontrolovať
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                }
+
+            } else {
+                snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
+                snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+            }
+            //ak sa nerovnaju ani riadky ani stlpce
+        } else {
+            printf("Dostal som sa k switchu!!!!!");
+            switch (snake->direction) {
+                case UP:
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
+                    break;
+                case DOWN:
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y-1;
+                    break;
+                case LEFT:
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x+1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                    break;
+                case RIGHT:
+                    snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x-1;
+                    snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
+                    break;
+            }
+        }
+    }
+}
 
 int main(void)
 {
@@ -425,8 +558,143 @@ int main(void)
                 snake.snakeLength = snk;
                 printf("??????????%d????????????????????\n",snake.snakeLength );
 //TODO:TU TO TREBA TAKTO NAINICIALIZOVAŤ!!!! takto všetko
-                snake.position[snake.snakeLength-1].x = snake.position[snake.snakeLength-2].x; //zlozitejsia logika treba vyriesit ak je na krajoch hracieho pola
-                snake.position[snake.snakeLength-1].y = snake.position[snake.snakeLength-2].y+1;//zlozitejsia logika treba vyriesit ak je na krajoch hracieho pola
+
+               //TODO TU VOLAT TU METODU
+                placeNewBodyPart(&snake);
+                if (snake.position[snake.snakeLength-2].x == 0){
+
+                }
+             /*   if (snake.position[snake.snakeLength-2].x == WIDTH - 1){
+                    //ak je v pravom hornom rohu
+                    if  ( snake.position[snake.snakeLength-2].y == 0 ) {
+                        //ak je aj zvysok tela v pravom stlpci
+                        if (snake.position[snake.snakeLength - 3].x == WIDTH - 1) {
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x - 1;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                        } else {
+                            //ak je zvysok v hornom riadku
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y+1;
+                        }
+
+                    } else if(snake.position[snake.snakeLength-2].y == HEIGHT - 1){
+                        if (snake.position[snake.snakeLength - 3].x == WIDTH - 1) {
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x - 1;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                        } else {
+                            //ak je zvysok v hornom riadku
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y-1;
+                        }
+                        //ak su v rovnako stlpci
+                    } else if(snake.position[snake.snakeLength - 2].x  ==  snake.position[snake.snakeLength - 3].x ){
+                        //ak je predposledna cast nizsie teda had smeruje dole
+                        if (snake.position[snake.snakeLength - 2].y  >  snake.position[snake.snakeLength - 3].y){
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y-1;
+                        }else {
+                            //ak smeruje had hore
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y+1;
+                        }
+                    }
+                    //ak je y ne dolnej hranici tak sa to musi vykreslit bokom
+                }else if(snake.position[snake.snakeLength-2].x == 0){
+                    //ak je v lavom hornom rohu
+                    if  ( snake.position[snake.snakeLength-2].y == 0 ) {
+                        //ak je aj zvysok tela v pravom stlpci
+                        if (snake.position[snake.snakeLength - 3].x == 0) {
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x + 1;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                        } else {
+                            //ak je zvysok v hornom riadku
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y+1;
+                        }
+                        //ak je v lavom dolnom rohu
+                    } else if(snake.position[snake.snakeLength-2].y == HEIGHT - 1){
+                        if (snake.position[snake.snakeLength - 3].x == 0) {
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x + 1;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                        } else {
+                            //ak je zvysok v dolnom riadku
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y-1;
+                        }
+                        //ak su v rovnako stlpci
+                    } else if(snake.position[snake.snakeLength - 2].x  ==  snake.position[snake.snakeLength - 3].x ){
+                        //ak je predposledna cast nizsie teda had smeruje dole
+                        if (snake.position[snake.snakeLength - 2].y  >  snake.position[snake.snakeLength - 3].y){
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y-1;
+                        }else {
+                            //ak smeruje had hore
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y+1;
+                        }
+                    }else{
+                        snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                        snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y+1;
+                    }
+                } else{
+                    if(snake.position[snake.snakeLength-2].y == 0){
+                        //rohy su vyriesene vyssie
+                        if (snake.position[snake.snakeLength-2].y == snake.position[snake.snakeLength-3].y){
+                            //ak je
+                            if (snake.position[snake.snakeLength-2].x > snake.position[snake.snakeLength-3].x){
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x + 1;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                            } else{
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x - 1;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                            }
+
+                        } else{
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x - 1;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                        }
+                    }else if(snake.position[snake.snakeLength-2].y == HEIGHT - 1){
+                        //rohy su vyriesene vyssie
+                        if (snake.position[snake.snakeLength-2].y == snake.position[snake.snakeLength-3].y){
+                            //ak je//TODO:skontrolovať
+                            if (snake.position[snake.snakeLength-2].x > snake.position[snake.snakeLength-3].x){
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x + 1;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                            } else{
+                                //TODO:skontrolovať
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x - 1;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                            }
+
+                        } else {
+                            snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x - 1;
+                            snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                        }
+                        //ak sa nerovnaju ani riadky ani stlpce
+                    } else {
+                        printf("Dostal som sa k switchu!!!!!");
+                        switch (snake.direction) {
+                            case UP:
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y+1;
+                                break;
+                            case DOWN:
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y-1;
+                                break;
+                            case LEFT:
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x+1;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                                break;
+                            case RIGHT:
+                                snake.position[snake.snakeLength - 1].x = snake.position[snake.snakeLength - 2].x-1;
+                                snake.position[snake.snakeLength - 1].y = snake.position[snake.snakeLength - 2].y;
+                                break;
+                        }
+                    }
+                }*/
+                //snake.position[snake.snakeLength-1].x = snake.position[snake.snakeLength-2].x; //zlozitejsia logika treba vyriesit ak je na krajoch hracieho pola
+                //snake.position[snake.snakeLength-1].y = snake.position[snake.snakeLength-2].y+1;//zlozitejsia logika treba vyriesit ak je na krajoch hracieho pola
 //                ++snake.snakeLength;
             //    snake.score = snake.score + 1;
             } else
@@ -466,6 +734,7 @@ int main(void)
                     food.position.x = rand() % WIDTH;
                     food.position.y = rand() % HEIGHT;
                     printf("??????????FOR 432 %d????????????????????\n");
+                    placeNewBodyPart(&snake2);
                     snake2.snakeLength++;
                     printf("??????????FOR 434 %d????????????????????\n");
                     snake2.score++;
