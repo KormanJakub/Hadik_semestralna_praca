@@ -249,7 +249,7 @@ void InputKeyboard(SNAKE * snake)
     }
 }
 
-bool CheckCollision(SNAKE snake)
+bool CheckCollision(SNAKE snake, SNAKE snake2)
 {
     //Kontrola narazu s hranicami
     if (snake.position[0].x < 0 || snake.position[0].y < 0 || snake.position[0].x >= WIDTH || snake.position[0].y >= HEIGHT)
@@ -263,6 +263,15 @@ bool CheckCollision(SNAKE snake)
         if (snake.position[0].x == snake.position[i].x && snake.position[0].y == snake.position[i].y)
         {
             printf("Hadik narazil do svojho tela\n");
+            return true;
+        }
+    }
+//TODO: skontrollovat ci umru pri narazoch hlavy
+    for (int i = 0; i < snake2.length; i++)
+    {
+        if (snake.position[0].x == snake2.position[i].x && snake.position[0].y == snake2.position[i].y)
+        {
+            printf("Hadik narazil do druheho hada\n");
             return true;
         }
     }
@@ -342,7 +351,7 @@ int main(void)
             Movement(&snake);
 
             //toto bude treba inak lebo druhy hrac bude este moct predsa hrat
-            if (CheckCollision(snake) && snake1crash == 0)
+            if (CheckCollision(snake, snake2) && snake1crash == 0)
             {
                 snake1crash = 1;
             }
@@ -374,7 +383,7 @@ int main(void)
                 InputKeyboard(&snake2);
                 Movement(&snake2);
 
-                if (CheckCollision(snake2) && snake2crash == 0) {
+                if (CheckCollision(snake2, snake) && snake2crash == 0) {
                     snake2crash = 1;
                 }
 
