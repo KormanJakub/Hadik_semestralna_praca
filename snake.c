@@ -46,6 +46,24 @@ typedef struct food
     POSITION position;
 } FOOD;
 
+void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
+    switch (snake->direction) {
+        case UP:
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
+            break;
+        case DOWN:
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
+            break;
+        case LEFT:
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
+            break;
+        case RIGHT:
+            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
+            break;
+
+    }
+}
+
 //player pridany aby sa vedelo ktoreho hada otocit
 //TODO: Pripomenu, že existuje aj druhy hadik + vyriešiť dokreslenie druheho hadika
 void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, DIRECTION * direction, int player)
@@ -64,9 +82,14 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
     {
         case UP:
             if (player == 1){
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;}
+
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
+                drawOtherSnakeHead(snake2, map);
+            }
             if (player == 2){
+
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_UP;
+                drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
@@ -75,9 +98,14 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
             break;
         case DOWN:
             if (player == 1){
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;}
+
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
+                drawOtherSnakeHead(snake2, map);
+               }
             if (player == 2){
+
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_DOWN;
+                drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
@@ -86,9 +114,14 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
             break;
         case RIGHT:
             if (player == 1){
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;}
+
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
+                drawOtherSnakeHead(snake2, map);
+            }
             if (player == 2){
+
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_RIGHT;
+                drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
@@ -97,9 +130,14 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
             break;
         case LEFT:
             if (player == 1){
-            map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;}
+
+                map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
+                drawOtherSnakeHead(snake2, map);
+            }
             if (player == 2){
+
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_LEFT;
+                drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
@@ -111,16 +149,16 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
     }
 
     //Vykreslenie tela
-    if (snake->type == SERVER){
+    //if (snake->type == SERVER){
         for (int i = 1; i < snake->length; i++) {
             map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY;
         }
-    }
-     if (snake->type == KLIENT){
+    //}
+     //if (snake->type == KLIENT){
         for (int i = 1; i < snake2->length; i++) {
-            map[snake->position[i].y][snake->position[i].x] = SNAKE_BODY_2;
+            map[snake2->position[i].y][snake2->position[i].x] = SNAKE_BODY_2;
         }
-    }
+    //}
 
     //Vykreslenie jedla
     map[food.position.y][food.position.x] = FOOD_TY;
@@ -348,7 +386,7 @@ int main(void)
             break;
         }
 
-        InitMap(map, &snake,&snake2, food, &snake.direction, 2);
+        InitMap(map, &snake,&snake2, food, &snake2.direction, 2);
     }
 
     return 0;
