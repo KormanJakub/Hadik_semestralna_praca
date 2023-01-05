@@ -47,6 +47,7 @@ typedef struct food
 } FOOD;
 
 void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
+
     switch (snake->direction) {
         case UP:
             map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
@@ -334,24 +335,29 @@ int main(void)
             printf("\n");
         }
 
-        printf("Narade je prvy hrac\n");
-        InputKeyboard(&snake);
-        Movement(&snake);
+      if(snake1crash == 0)
+      {
+            printf("Narade je prvy hrac\n");
+            InputKeyboard(&snake);
+            Movement(&snake);
 
-        //toto bude treba inak lebo druhy hrac bude este moct predsa hrat
-        if (CheckCollision(snake) && snake1crash == 0)
-        {
-            snake1crash = 1;
-        }
+            //toto bude treba inak lebo druhy hrac bude este moct predsa hrat
+            if (CheckCollision(snake) && snake1crash == 0)
+            {
+                snake1crash = 1;
+            }
 
-        if (CheckCollisionWithFood(snake, food))
-        {
-            food.position.x = rand() % WIDTH;
-            food.position.y = rand() % HEIGHT;
+            if (CheckCollisionWithFood(snake, food))
+            {
+                printf("HAD1: dostal som sa do jedenia");
+                food.position.x = rand() % WIDTH;
+                food.position.y = rand() % HEIGHT;
 
-            snake.length++;
-            snake.score++;
-        }
+                snake.length++;
+                snake.score++;
+            }
+
+      }
 
         InitMap(map, &snake,&snake2, food, &snake.direction, 1);
 
@@ -363,29 +369,30 @@ int main(void)
         }
 
         //pohyb bude musiet byt oddelene si myslim
-        printf("Narade je druhy hrac\n");
-        InputKeyboard(&snake2);
-        Movement(&snake2);
+        if(snake2crash == 0) {
+                printf("Narade je druhy hrac\n");
+                InputKeyboard(&snake2);
+                Movement(&snake2);
 
-        if (CheckCollision(snake2) && snake2crash == 0)
-        {
-            snake2crash = 1;
-        }
+                if (CheckCollision(snake2) && snake2crash == 0) {
+                    snake2crash = 1;
+                }
 
-        if (CheckCollisionWithFood(snake2, food))
-        {
-            food.position.x = rand() % WIDTH;
-            food.position.y = rand() % HEIGHT;
+                if (CheckCollisionWithFood(snake2, food)) {
+                    printf("HAD2: dostal som sa do jedenia");
+                    food.position.x = rand() % WIDTH;
+                    food.position.y = rand() % HEIGHT;
 
-            snake2.length++;
-            snake2.score++;
+                    snake2.length++;
+                    snake2.score++;
+                }
+
         }
 
         if (snake1crash == 1 && snake2crash == 1) {
             printf("Oba hadiky zomreli\nGAME OVER!!!");
             break;
         }
-
         InitMap(map, &snake,&snake2, food, &snake2.direction, 2);
     }
 
