@@ -1,4 +1,5 @@
 #include "k_a_t_definitions.h"
+#include "game_snake.c"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,10 +37,12 @@ int data_isStopped(DATA *data) {
     return stop;
 }
 
+
 void *data_readData(void *data) {    
     DATA *pdata = (DATA *)data;
     char buffer[BUFFER_LENGTH + 1];
 	buffer[BUFFER_LENGTH] = '\0';
+
     while(!data_isStopped(pdata)) {
 		bzero(buffer, BUFFER_LENGTH);
 		if (read(pdata->socket, buffer, BUFFER_LENGTH) > 0) {

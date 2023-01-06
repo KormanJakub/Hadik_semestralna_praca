@@ -1,4 +1,6 @@
 #include <unistd.h>
+#include <string.h>
+#include <error.h>
 #include "game_snake.h"
 
 void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
@@ -185,7 +187,6 @@ void InputKeyboard(SNAKE * snake)
     //Vkladanie pohybu z klavesnice + kontrola
     int c = getchar();
     getchar();
-    //co ak nezadal nic? - myslim si ze preto to pokracuje s vypisom nespravna klavesa
 
     if (c == 'w')
     {
@@ -416,7 +417,7 @@ void placeNewBodyPart(SNAKE * snake){
     }
 }
 
-int gameplay(void)
+int gameplay()
 {
     int snake1crash = 0;
     int snake2crash = 0;
@@ -476,7 +477,7 @@ int gameplay(void)
 
         if(snake1crash == 0)
         {
-            printf("Narade je prvy hrac\n");
+            printf("Narade je SERVER\n");
             InputKeyboard(&snake);
             Movement(&snake);
 
@@ -495,9 +496,9 @@ int gameplay(void)
                 placeNewBodyPart(&snake);
                 snake.score++;
             }
-
         }
 
+        //POSLI DATA
         InitMap(map, &snake,&snake2, food, &snake.direction, 1);
 
         for (int i = 0; i < WIDTH; i++) {
@@ -507,7 +508,9 @@ int gameplay(void)
             printf("\n");
         }
 
+        //PRECITAJ CO NAPISAL KLIENT
         if(snake2crash == 0) {
+            printf("Narade je KLIENT\n");
             InputKeyboard(&snake2);
             Movement(&snake2);
             if (CheckCollision(snake2, snake)) {
@@ -530,6 +533,8 @@ int gameplay(void)
         }
 
         InitMap(map, &snake,&snake2, food, &snake2.direction, 2);
+
+        //POSLI DATA
     }
 
     return 0;

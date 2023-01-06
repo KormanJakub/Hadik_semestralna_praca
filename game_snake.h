@@ -59,4 +59,5 @@ typedef struct food
     POSITION position;
 } FOOD;
 
+
 #endif //HADIK_SEMESTRALNA_PRACA_GAME_SNAKE_H
