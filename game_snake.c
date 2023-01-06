@@ -417,6 +417,15 @@ void placeNewBodyPart(SNAKE * snake){
     }
 }
 
+void draw(){
+    for (int i = 0; i < WIDTH; i++) {
+        for (int j = 0; j < HEIGHT; j++) {
+            printf("%c", map[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 int gameplay()
 {
     int snake1crash = 0;
@@ -468,12 +477,13 @@ int gameplay()
 
     while (true)
     {
-        for (int i = 0; i < WIDTH; i++) {
+        /*for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 printf("%c", map[i][j]);
             }
             printf("\n");
-        }
+        }*/
+        draw();
 
         if(snake1crash == 0)
         {
@@ -501,12 +511,13 @@ int gameplay()
         //POSLI DATA
         InitMap(map, &snake,&snake2, food, &snake.direction, 1);
 
-        for (int i = 0; i < WIDTH; i++) {
+        /*for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 printf("%c", map[i][j]);
             }
             printf("\n");
-        }
+        }*/
+        draw();
 
         //PRECITAJ CO NAPISAL KLIENT
         if(snake2crash == 0) {
