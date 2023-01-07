@@ -537,7 +537,7 @@ int gameplay(int sock, bool is_server)
 
         InitMap(map, &snake,&snake2, food, &snake2.direction, 2);
     }
-
+    free(t);
     pthread_mutex_destroy(&mtx);
     pthread_cond_destroy(&cond);
 
