@@ -59,5 +59,23 @@ typedef struct food
     POSITION position;
 } FOOD;
 
+typedef struct food_spawner
+{
+    pthread_cond_t* signal;
+    pthread_mutex_t* mutex;
+    FOOD* food;
+    bool is_spawned;
+} SPAWN_DATA;
+
+
+void drawOtherSnakeHead(SNAKE * snake, char map[HEIGHT][WIDTH]);
+void InitMap(char map[HEIGHT][WIDTH], SNAKE * snake,SNAKE * snake2, FOOD food, DIRECTION * direction, int player);
+void Movement(SNAKE * snake);
+void InputKeyboard(SNAKE * snake, int sock, bool recieving);
+bool CheckCollision(SNAKE snake, SNAKE snake2);
+bool CheckCollisionWithFood(SNAKE snake, FOOD food);
+void placeNewBodyPart(SNAKE * snake);
+int gameplay(int sock, bool is_server);
+void* food_spawn_thread(void* data);
 
 #endif //HADIK_SEMESTRALNA_PRACA_GAME_SNAKE_H

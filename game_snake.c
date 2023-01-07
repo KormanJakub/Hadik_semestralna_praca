@@ -1,29 +1,20 @@
 #include <unistd.h>
 #include <string.h>
-#include <error.h>
 #include "game_snake.h"
 
 void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
     switch (snake->direction) {
         case UP:
-            pthread_mutex_lock(&mutex);
             map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
-            pthread_mutex_unlock(&mutex);
             break;
         case DOWN:
-            pthread_mutex_lock(&mutex);
             map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
-            pthread_mutex_unlock(&mutex);
             break;
         case LEFT:
-            pthread_mutex_lock(&mutex);
             map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
-            pthread_mutex_unlock(&mutex);
             break;
         case RIGHT:
-            pthread_mutex_lock(&mutex);
             map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
-            pthread_mutex_unlock(&mutex);
             break;
 
     }
@@ -37,9 +28,7 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
     {
         for (int j = 0; j < HEIGHT; j++)
         {
-            pthread_mutex_lock(&mutex);
             map[i][j] = EMPTY;
-            pthread_mutex_unlock(&mutex);
         }
     }
 
@@ -48,82 +37,58 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
     {
         case UP:
             if (player == 1){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake2, map);
             }
             if (player == 2){
-                pthread_mutex_lock(&mutex);
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_UP;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_UP;
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_UP;
-                pthread_mutex_unlock(&mutex);
             }
             break;
         case DOWN:
             if (player == 1){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake2, map);
             }
             if (player == 2){
-                pthread_mutex_lock(&mutex);
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_DOWN;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_DOWN;
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_DOWN;
-                pthread_mutex_unlock(&mutex);
             }
             break;
         case RIGHT:
             if (player == 1){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake2, map);
             }
             if (player == 2){
-                pthread_mutex_lock(&mutex);
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_RIGHT;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_RIGHT;
-                pthread_mutex_unlock(&mutex);
             }
             break;
         case LEFT:
             if (player == 1){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake2, map);
             }
             if (player == 2){
-                pthread_mutex_lock(&mutex);
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_LEFT;
-                pthread_mutex_unlock(&mutex);
                 drawOtherSnakeHead(snake, map);
             }
             if (player == 100){
-                pthread_mutex_lock(&mutex);
                 map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_LEFT;
                 map[snake2->position[0].y][snake2->position[0].x] = SNAKE_HEAD_LEFT;
-                pthread_mutex_unlock(&mutex);
             }
             break;
         default:
@@ -135,24 +100,18 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
     for (int i = 1; i < snake->snakeLength; i++) {
         int posY = snake->position[i].y;
         int posX = snake->position[i].x;
-        pthread_mutex_lock(&mutex);
         map[posY][posX] = SNAKE_BODY;
-        pthread_mutex_unlock(&mutex);
     }
     //}
     //if (snake->type == KLIENT){
 
     for (int i = 1; i < snake2->snakeLength; i++) {
-        pthread_mutex_lock(&mutex);
         map[snake2->position[i].y][snake2->position[i].x] = SNAKE_BODY_2;
-        pthread_mutex_unlock(&mutex);
     }
     //}
 
     //Vykreslenie jedla
-    pthread_mutex_lock(&mutex);
     map[food.position.y][food.position.x] = FOOD_TY;
-    pthread_mutex_unlock(&mutex);
 }
 
 void Movement(SNAKE * snake)
@@ -182,11 +141,17 @@ void Movement(SNAKE * snake)
     }
 }
 
-void InputKeyboard(SNAKE * snake)
+void InputKeyboard(SNAKE * snake, int sock, bool reciving)
 {
     //Vkladanie pohybu z klavesnice + kontrola
-    int c = getchar();
-    getchar();
+    int c = 0;
+    if (!reciving) {
+        c = getchar();
+        getchar();
+        write(sock, &c, sizeof (int));
+    } else {
+        read(sock, &c, sizeof (int));
+    }
 
     if (c == 'w')
     {
@@ -374,12 +339,11 @@ void placeNewBodyPart(SNAKE * snake){
         }else if(snake->position[snake->snakeLength-2].y == HEIGHT - 1){
             //rohy su vyriesene vyssie
             if (snake->position[snake->snakeLength-2].y == snake->position[snake->snakeLength-3].y){
-                //ak je//TODO:skontrolovať
+                //ak je
                 if (snake->position[snake->snakeLength-2].x > snake->position[snake->snakeLength-3].x){
                     snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x + 1;
                     snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
-                } else{
-                    //TODO:skontrolovať
+                } else {
                     snake->position[snake->snakeLength - 1].x = snake->position[snake->snakeLength - 2].x - 1;
                     snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y;
                 }
@@ -412,16 +376,32 @@ void placeNewBodyPart(SNAKE * snake){
                     snake->position[snake->snakeLength - 1].y = snake->position[snake->snakeLength - 2].y+1;
                 }
             }
-            printf("Dostal som suradnice!!!!");
+            printf("Dostal som suradnice!!!!\n");
         }
     }
 }
 
-int gameplay()
+void* food_spawn_thread(void* data) {
+    SPAWN_DATA* d = (SPAWN_DATA*) data;
+    while(1){
+        pthread_mutex_lock(d->mutex);
+        if(d->is_spawned){
+            pthread_cond_wait(d->signal, d->mutex);
+            pthread_mutex_unlock(d->mutex);
+        } else {
+            printf("Generujem food\n\r");
+            d->food->position.x = rand() % WIDTH;
+            d->food->position.y = rand() % HEIGHT;
+            d->is_spawned = true;
+            pthread_mutex_unlock(d->mutex);
+        }
+    }
+}
+
+int gameplay(int sock, bool is_server)
 {
     int snake1crash = 0;
     int snake2crash = 0;
-    char map_buffer[map_size];
     srand(time(NULL));
 
     //prerabka na smernik pokus zbavit sa segmentation fault --smernik nebol spravne riesenie
@@ -463,6 +443,18 @@ int gameplay()
     food.position.x = rand() % WIDTH;
     food.position.y = rand() % HEIGHT;
 
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+    SPAWN_DATA data = {
+            .is_spawned = true,
+            .food = &food,
+            .mutex = &mtx,
+            .signal = &cond
+    };
+    pthread_t *t = (pthread_t*) malloc (sizeof(pthread_t));
+    pthread_create(t, NULL, food_spawn_thread, (void*)&data);
+    pthread_detach(*t);
+
     //prva inicializacia vykresli oboch rovnako
     InitMap(map, &snake,&snake2, food, &snake.direction, 100);
 
@@ -478,18 +470,23 @@ int gameplay()
         if(snake1crash == 0)
         {
             printf("Narade je SERVER\n");
-            InputKeyboard(&snake);
+            if (is_server) {
+                InputKeyboard(&snake, sock, false);
+            } else {
+                InputKeyboard(&snake, sock, true);
+            }
             Movement(&snake);
 
-            //toto bude treba inak lebo druhy hrac bude este moct predsa hrat
             if (CheckCollision(snake, snake2))
             {
                 snake1crash = 1;
             }
             if (CheckCollisionWithFood(snake, food))
             {
-                food.position.x = rand() % WIDTH;
-                food.position.y = rand() % HEIGHT;
+                pthread_mutex_lock(data.mutex);
+                data.is_spawned = false;
+                pthread_mutex_unlock(data.mutex);
+                pthread_cond_signal(&cond);
                 int snk = snake.snakeLength;
                 snk = snk + 1;
                 snake.snakeLength = snk;
@@ -498,7 +495,6 @@ int gameplay()
             }
         }
 
-        //POSLI DATA
         InitMap(map, &snake,&snake2, food, &snake.direction, 1);
 
         for (int i = 0; i < WIDTH; i++) {
@@ -508,10 +504,13 @@ int gameplay()
             printf("\n");
         }
 
-        //PRECITAJ CO NAPISAL KLIENT
         if(snake2crash == 0) {
             printf("Narade je KLIENT\n");
-            InputKeyboard(&snake2);
+            if (is_server) {
+                InputKeyboard(&snake2, sock, true);
+            } else {
+                InputKeyboard(&snake2, sock, false);
+            }
             Movement(&snake2);
             if (CheckCollision(snake2, snake)) {
                 snake2crash = 1;
@@ -519,8 +518,10 @@ int gameplay()
 
             if (CheckCollisionWithFood(snake2, food))
             {
-                food.position.x = rand() % WIDTH;
-                food.position.y = rand() % HEIGHT;
+                pthread_mutex_lock(data.mutex);
+                data.is_spawned = false;
+                pthread_mutex_unlock(data.mutex);
+                pthread_cond_signal(&cond);
                 snake2.snakeLength++;
                 placeNewBodyPart(&snake2);
                 snake2.score++;
@@ -533,9 +534,10 @@ int gameplay()
         }
 
         InitMap(map, &snake,&snake2, food, &snake2.direction, 2);
-
-        //POSLI DATA
     }
+
+    pthread_mutex_destroy(&mtx);
+    pthread_cond_destroy(&cond);
 
     return 0;
 }
