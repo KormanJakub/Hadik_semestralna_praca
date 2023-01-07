@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 
-int client_main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
     struct hostent *server = gethostbyname(argv[1]);
     if (server == NULL) {
         printf("Server neexistuje.");

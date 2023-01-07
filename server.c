@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include "game_snake.h"
 
-int server_main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     if (argc < 2) {
         printf("Sever je nutne spustit s nasledujucimi argumentmi: port pouzivatel.");
     }
