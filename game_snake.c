@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <string.h>
+#include <error.h>
 #include "game_snake.h"
 
 char map[HEIGHT][WIDTH];
