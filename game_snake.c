@@ -2,6 +2,8 @@
 #include <string.h>
 #include "game_snake.h"
 
+char map[HEIGHT][WIDTH];
+
 void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
     switch (snake->direction) {
         case UP:

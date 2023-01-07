@@ -20,10 +20,6 @@
 
 #define SNAKE_BODY_2        '8'
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-char map[HEIGHT][WIDTH];
-int map_size = HEIGHT * WIDTH * sizeof(map);
-
 typedef struct position
 {
     int x;

@@ -1,0 +1,6 @@
+#ifndef HADIK_SEMESTRALNA_PRACA_SERVER_H
+#define HADIK_SEMESTRALNA_PRACA_SERVER_H
+
+int server_main(int argc, char *argv[]);
+
+#endif //HADIK_SEMESTRALNA_PRACA_SERVER_H

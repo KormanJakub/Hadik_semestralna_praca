@@ -1,0 +1,6 @@
+#ifndef HADIK_SEMESTRALNA_PRACA_CLIENT_H
+#define HADIK_SEMESTRALNA_PRACA_CLIENT_H
+
+int client_main(int argc, char* argv[]);
+
+#endif //HADIK_SEMESTRALNA_PRACA_CLIENT_H

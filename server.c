@@ -1,27 +1,25 @@
-#include "k_a_t_definitions.c"
+#include "server.h"
 
+#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
 #include <sys/socket.h>
-#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <unistd.h>
-#include <pthread.h>
+#include "game_snake.h"
 
-int main(int argc, char* argv[]) {
-    if (argc < 3) {
-        printError("Sever je nutne spustit s nasledujucimi argumentmi: port pouzivatel.");
+int server_main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Sever je nutne spustit s nasledujucimi argumentmi: port pouzivatel.");
     }
     int port = atoi(argv[1]);
-	if (port <= 0) {
-		printError("Port musi byt cele cislo vacsie ako 0.");
-	}
-    char *userName = argv[2];
+    if (port <= 0) {
+        printf("Port musi byt cele cislo vacsie ako 0.");
+    }
 
     //vytvorenie TCP socketu <sys/socket.h>
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket < 0) {
-        printError("Chyba - socket.");
+        printf("Chyba - socket.");
     }
 
     //definovanie adresy servera <arpa/inet.h>
@@ -32,7 +30,7 @@ int main(int argc, char* argv[]) {
 
     //prepojenie adresy servera so socketom <sys/socket.h>
     if (bind(serverSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0) {
-        printError("Chyba - bind.");
+        printf("Chyba - bind.");
     }
 
     //server bude prijimat nove spojenia cez socket serverSocket <sys/socket.h>
@@ -43,29 +41,15 @@ int main(int argc, char* argv[]) {
     socklen_t clientAddressLength = sizeof(clientAddress);
     int clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientAddressLength);
 
+    gameplay(clientSocket, true);
+
     //uzavretie pasivneho socketu <unistd.h>
     close(serverSocket);
     if (clientSocket < 0) {
-        printError("Chyba - accept.");
+        printf("Chyba - accept.");
     }
 
-    //inicializacia dat zdielanych medzi vlaknami
-    DATA data;
-    data_init(&data, userName, clientSocket);
-
-    //vytvorenie vlakna pre zapisovanie dat do socketu <pthread.h>
-    pthread_t thread;
-    pthread_create(&thread, NULL, data_writeData, (void *)&data);
-
-    //v hlavnom vlakne sa bude vykonavat citanie dat zo socketu
-    data_readData((void *)&data);
-
-    //pockame na skoncenie zapisovacieho vlakna <pthread.h>
-    pthread_join(thread, NULL);
-    data_destroy(&data);
-
-    //uzavretie socketu klienta <unistd.h>
     close(clientSocket);
 
-    return (EXIT_SUCCESS);
+    return 0;
 }
