@@ -386,7 +386,6 @@ void* food_spawn_thread(void* data) {
             pthread_cond_wait(d->signal, d->mutex);
             pthread_mutex_unlock(d->mutex);
         } else {
-            printf("Generujem food\n\r");
             d->food->position.x = rand() % WIDTH;
             d->food->position.y = rand() % HEIGHT;
             d->is_spawned = true;
