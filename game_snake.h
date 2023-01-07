@@ -63,7 +63,6 @@ typedef struct food_spawner
     bool is_spawned;
 } SPAWN_DATA;
 
-
 void drawOtherSnakeHead(SNAKE * snake, char map[HEIGHT][WIDTH]);
 void InitMap(char map[HEIGHT][WIDTH], SNAKE * snake,SNAKE * snake2, FOOD food, DIRECTION * direction, int player);
 void Movement(SNAKE * snake);

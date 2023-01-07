@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <string.h>
-#include <error.h>
 #include "game_snake.h"
 
 char map[HEIGHT][WIDTH];
@@ -19,7 +18,6 @@ void drawOtherSnakeHead(SNAKE * snake, char map[WIDTH][HEIGHT]){
         case RIGHT:
             map[snake->position[0].y][snake->position[0].x] = SNAKE_HEAD_RIGHT;
             break;
-
     }
 }
 
@@ -99,19 +97,15 @@ void InitMap(char map[WIDTH][HEIGHT], SNAKE * snake,SNAKE * snake2, FOOD food, D
     }
 
     //Vykreslenie tela
-    //if (snake->type == SERVER){
     for (int i = 1; i < snake->snakeLength; i++) {
         int posY = snake->position[i].y;
         int posX = snake->position[i].x;
         map[posY][posX] = SNAKE_BODY;
     }
-    //}
-    //if (snake->type == KLIENT){
 
     for (int i = 1; i < snake2->snakeLength; i++) {
         map[snake2->position[i].y][snake2->position[i].x] = SNAKE_BODY_2;
     }
-    //}
 
     //Vykreslenie jedla
     map[food.position.y][food.position.x] = FOOD_TY;
@@ -214,7 +208,7 @@ bool CheckCollision(SNAKE snake, SNAKE snake2)
         return true;
     }
 
-    //Kontrola narazu s telom
+    //Kontrola narazu s prveho hadika telom
     for (int i = 1; i < snake.snakeLength; i++)
     {
         if (snake.position[0].x == snake.position[i].x && snake.position[0].y == snake.position[i].y)
@@ -224,6 +218,7 @@ bool CheckCollision(SNAKE snake, SNAKE snake2)
         }
     }
 
+    //Kontrola narazu s druheho hadika telom
     for (int i = 0; i < snake2.snakeLength; i++)
     {
         if (snake.position[0].x == snake2.position[i].x && snake.position[0].y == snake2.position[i].y)
@@ -238,7 +233,6 @@ bool CheckCollision(SNAKE snake, SNAKE snake2)
 
 bool CheckCollisionWithFood(SNAKE snake, FOOD food)
 {
-    printf("Had %u sa snazi zjest jedlo\n", snake.type);
     //Kontrola narazu s jedlom
     if (snake.position[0].x == food.position.x && snake.position[0].y == food.position.y)
     {
