@@ -400,7 +400,6 @@ int gameplay(int sock, bool is_server)
     int snake2crash = 0;
     srand(time(NULL));
 
-    //prerabka na smernik pokus zbavit sa segmentation fault --smernik nebol spravne riesenie
     SNAKE snake, snake2;
     SNAKEP snakep;
 
