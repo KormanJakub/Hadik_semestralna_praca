@@ -546,6 +546,6 @@ int gameplay(int sock, bool is_server)
     pthread_mutex_destroy(&mtx);
     pthread_cond_destroy(&cond);
 
-    pthread_exit(NULL);
-   // return 0;
+
+    return 0;
 }

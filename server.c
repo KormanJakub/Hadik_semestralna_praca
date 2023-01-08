@@ -51,6 +51,5 @@ int main(int argc, char *argv[]) {
 
     close(clientSocket);
 
-    pthread_exit(NULL);
-    //return 0;
+    return 0;
 }

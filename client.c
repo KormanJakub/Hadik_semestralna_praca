@@ -41,6 +41,5 @@ int main(int argc, char* argv[]) {
     gameplay(sock, false);
 
     close(sock);
-    pthread_exit(NULL);
-    //return 0;
+    return 0;
 }
