@@ -449,7 +449,7 @@ int gameplay(int sock, bool is_server)
     };
     pthread_t *t = (pthread_t*) malloc (sizeof(pthread_t));
     pthread_create(t, NULL, food_spawn_thread, (void*)&data);
-    pthread_detach(*t);
+    pthread_join(*t, NULL);
 
     //prva inicializacia vykresli oboch rovnako
     InitMap(map, &snake,&snake2, food, &snake.direction, 100);
@@ -546,5 +546,6 @@ int gameplay(int sock, bool is_server)
     pthread_mutex_destroy(&mtx);
     pthread_cond_destroy(&cond);
 
-    return 0;
+    pthread_exit(NULL);
+   // return 0;
 }
