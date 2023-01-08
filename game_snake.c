@@ -476,6 +476,7 @@ int gameplay(int sock, bool is_server)
             if (CheckCollision(snake, snake2))
             {
                 snake1crash = 1;
+                printf("Skóre: %d\n", snake.score);
             }
             if (CheckCollisionWithFood(snake, food))
             {
@@ -510,6 +511,7 @@ int gameplay(int sock, bool is_server)
             Movement(&snake2);
             if (CheckCollision(snake2, snake)) {
                 snake2crash = 1;
+                printf("Skóre: %d\n", snake2.score);
             }
 
             if (CheckCollisionWithFood(snake2, food))
@@ -526,6 +528,15 @@ int gameplay(int sock, bool is_server)
 
         if (snake1crash == 1 && snake2crash == 1) {
             printf("Oba hadiky zomreli\nGAME OVER!!!");
+            printf("Výsledné skóre je: \n\tHad1: %d \n\tHad2: %d\n", snake.score,snake2.score);
+            if  (snake.score > snake2.score){
+                printf("Vyhral hráč 1!\n");
+            }else if (snake.score == snake2.score){
+                printf("Hra skončila remízou!\n");
+            }else {
+                printf("Vyhral hráč 2!\n");
+            }
+
             break;
         }
 
